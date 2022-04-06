@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  push:
+    tags:
+    - '*'
+
+jobs:
+  build:
+    if: github.repository == 'barrachri/eightid'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install CI dependencies
+        run: make deps/install-ci
+
+      - name: Build package
+        run: poetry build
+
+      - name: Publish package
+        env:
+          PYPI_USERNAME: __token__
+          PYPI_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+        run: poetry publish -u $PYPI_USERNAME -p $PYPI_PASSWORD

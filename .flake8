@@ -1,0 +1,27 @@
+[flake8]
+count = true
+max-line-length = 80
+max-complexity = 10
+statistics = true
+exclude =
+    .git,
+    __pycache__,
+    old,
+    build,
+    dist,
+    .venv
+ignore =
+    # Use bugbear line length detection instead of default
+    E501,
+    # Missing docstring in __init__
+    D107,
+    # Missing docstring in magic method
+    D105,
+    # First line should end with a period
+    D400,
+    # Missing trailing comma
+    C812,
+    # First line should be in imperative mood
+    D401,
+    # Line break before binary operator
+    W503,

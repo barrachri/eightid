@@ -1,0 +1,56 @@
+name: Test
+
+on: [push, pull_request]
+
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        python-version: ['3.9', '3.10']
+
+    services:
+      postgres:
+        image: postgres:14.1
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Load cached Poetry local folder
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pypoetry
+          key: dev-poetry-${{ hashFiles('poetry.lock') }}
+          restore-keys: |
+            dev-poetry-
+
+      - name: Install CI dependencies
+        run: make deps/install-ci
+
+      - name: Code checks
+        run: make lint
+
+      - name: Tests
+        run: make test
