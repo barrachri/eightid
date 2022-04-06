@@ -28,7 +28,7 @@ def random_bits(n: int) -> List[int]:
     return list(os.urandom(n))
 
 
-def generate_gid() -> List[int]:
+def generate_eightid() -> List[int]:
     id = [0] * raw_len
     now = timestamp()
 
@@ -47,13 +47,13 @@ def generate_gid() -> List[int]:
     return id
 
 
-class InvalidGID(Exception):
+class InvalidEightID(Exception):
     pass
 
 
-class GID(object):
+class EightID(object):
     """
-    A short id base on 8 bytes (it fits in a PostgreSQL BigInt).
+    A short id based on 8 bytes (it fits in a PostgreSQL BigInt).
 
     32 bites bytes are taken from the timestamp.
     32 bites bytes are random generated (4.294.967.296 of unique numbers).
@@ -68,7 +68,7 @@ class GID(object):
 
     def __init__(self, id=None):
         if id is None:
-            id = generate_gid()
+            id = generate_eightid()
         self.value = id
 
     def __str__(self) -> str:
@@ -84,12 +84,12 @@ class GID(object):
 
     @cached_property
     def integer(self):
-        """Return the GID as int."""
+        """Return the EightID as int."""
         return int.from_bytes(self.value, "big")
 
     @cached_property
     def random(self) -> int:
-        """Return the random part of the GID."""
+        """Return the random part of the EightID."""
         return (
             self.value[4] << 24
             | self.value[5] << 16
@@ -104,7 +104,7 @@ class GID(object):
 
     @cached_property
     def time(self) -> int:
-        """Return the timestamp of the GID."""
+        """Return the timestamp of the EightID."""
         return right_timestamp(
             self.value[0] << 24
             | self.value[1] << 16
@@ -114,16 +114,16 @@ class GID(object):
 
     @cached_property
     def bytes(self) -> bytes:
-        """Return the GID as bytes."""
+        """Return the EightID as bytes."""
         return "".join(map(chr, self.value)).encode("utf-8")
 
     @classmethod
-    def from_string(cls, s: str) -> "GID":
+    def from_string(cls, s: str) -> "EightID":
         value = list(map(ord, unpacking(s)))
         return cls(value)
 
     @classmethod
-    def from_int(cls, i: int) -> "GID":
+    def from_int(cls, i: int) -> "EightID":
         value = list(i.to_bytes(8, "big"))
         return cls(value)
 
@@ -139,4 +139,4 @@ def unpacking(s: str):
             "utf-8"
         )
     except UnicodeDecodeError:
-        raise InvalidGID("Invalid GID format.")
+        raise InvalidEightID("Invalid EightID format.")

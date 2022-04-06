@@ -1,21 +1,19 @@
-from django.core.exceptions import ValidationError
 from django.db.models.fields import BigIntegerField
-from django.utils.deconstruct import deconstructible
 from django.utils.translation import gettext_lazy as _
 
-from . import GID
+from . import EightID
 
 
-class GIDField(BigIntegerField):
+class EightIDField(BigIntegerField):
     default_error_messages = {
-        "invalid": _("'%(value)s' is not a valid GID."),
+        "invalid": _("'%(value)s' is not a valid EightID."),
     }
-    description = "GID: a (really) short id, fitting in 8 bytes"
+    description = "EightID: a (really) short id, fitting in 8 bytes"
 
     def __init__(self, *args, **kwargs) -> None:
         # unique=True is a much more sensible default for UUIDs
         kwargs.setdefault("unique", True)
-        kwargs["default"] = GID
+        kwargs["default"] = EightID
         super().__init__(*args, **kwargs)
 
     def get_db_prep_value(self, value, *args, **kwargs):
@@ -25,18 +23,18 @@ class GIDField(BigIntegerField):
         return int(value)
 
     def to_python(self, value):
-        if isinstance(value, GID):
+        if isinstance(value, EightID):
             return value
 
         elif isinstance(value, int):
-            return GID.from_int(value)
+            return EightID.from_int(value)
 
         elif isinstance(value, str):
-            return GID.from_string(value)
+            return EightID.from_string(value)
 
         return value
 
     def from_db_value(self, value, *args, **kwargs):
         if value is None:
             return value
-        return GID.from_int(value)
+        return EightID.from_int(value)

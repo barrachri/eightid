@@ -1,7 +1,7 @@
 from django.db import models
 
-from src.gid import django
+from src.eightid import django
 
 
 class AppModel(models.Model):
-    id = django.GIDField(primary_key=True)
+    id = django.EightIDField(primary_key=True)
