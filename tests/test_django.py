@@ -7,7 +7,6 @@ from django_app.app.models import AppModel
 
 
 class TestModel:
-
     def test_unique_by_default(self):
         field = django.GIDField()
         assert field.unique
@@ -24,16 +23,18 @@ class TestModel:
     def test_to_python_invalid_value(self):
         field = django.GIDField()
         with pytest.raises(InvalidGID):
-            field.to_python('xxx')
+            field.to_python("xxx")
 
     def test_to_python_class_string(self):
         field = django.GIDField()
-        out = field.to_python('w6vDgXAoFsKcw5DCjQ')
+        out = field.to_python("w6vDgXAoFsKcw5DCjQ")
         assert isinstance(out, GID)
 
     def test_prep(self):
         field = django.GIDField()
-        out = field.get_db_prep_value(GID.from_string('w6vCu8OyVjsldmY'), connection=connection)
+        out = field.get_db_prep_value(
+            GID.from_string("w6vCu8OyVjsldmY"), connection=connection
+        )
         assert out == 16986436871731377766
 
     def test_prep_none(self):
@@ -43,7 +44,6 @@ class TestModel:
 
 
 class TestAppModel:
-
     @pytest.mark.django_db
     def test_value_created(self):
         model = AppModel.objects.create()
@@ -54,7 +54,7 @@ class TestAppModel:
     def test_persist_reload(self):
         model = AppModel.objects.create()
         model.save()
-        gid = AppModel.objects.values_list('id', flat=True)[0]
+        gid = AppModel.objects.values_list("id", flat=True)[0]
 
         assert model.id.value == gid.value
 
@@ -63,8 +63,9 @@ class TestAppModel:
         AppModel.objects.create()
         model = AppModel.objects.create()
         AppModel.objects.create()
-        gid = AppModel.objects.filter(id=model.id).values_list('id', flat=True)[0]
+        gid = AppModel.objects.filter(id=model.id).values_list(
+            "id", flat=True
+        )[0]
 
         assert isinstance(model.id, GID)
         assert model.id.value == gid.value
-

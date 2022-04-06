@@ -11,15 +11,18 @@ epoch = 1640995200
 # 8 bytes
 raw_len = 8
 
+
 def timestamp() -> int:
     """Seconds from epoch"""
     now = int(time.time())
     cid_epoch = now - epoch
     return cid_epoch
 
+
 def right_timestamp(ts: int) -> int:
     """Seconds from epoch"""
     return ts + epoch
+
 
 def random_bits(n: int) -> List[int]:
     return list(os.urandom(n))
@@ -39,7 +42,7 @@ def generate_gid() -> List[int]:
     id[4] = randb[0]
     id[5] = randb[1]
     id[6] = randb[2]
-    id[7] = (randb[3])
+    id[7] = randb[3]
 
     return id
 
@@ -132,6 +135,8 @@ def packing(b: bytes) -> str:
 def unpacking(s: str):
     padded_s = s + "=="
     try:
-        return base64.urlsafe_b64decode(padded_s.encode("utf-8")).decode("utf-8")
+        return base64.urlsafe_b64decode(padded_s.encode("utf-8")).decode(
+            "utf-8"
+        )
     except UnicodeDecodeError:
         raise InvalidGID("Invalid GID format.")

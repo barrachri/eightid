@@ -22,8 +22,10 @@ def test_timestamp():
 
     assert isinstance(time, int)
 
+
 def test_timestamp_conversion():
     assert right_timestamp(timestamp())
+
 
 def test_gid_int_bit_length():
     gid = GID()
@@ -42,7 +44,8 @@ def test_gid_datetime():
     assert gid.datetime.minute == now.minute
     assert gid.datetime.second == now.second
 
-@pytest.mark.parametrize('execution_number', range(100))
+
+@pytest.mark.parametrize("execution_number", range(100))
 def test_gid(execution_number):
     gid = GID()
 
@@ -57,6 +60,7 @@ def test_gid(execution_number):
     assert isinstance(gid.time, int)
     assert isinstance(gid.datetime, datetime)
 
+
 def test_create_from_string():
     gid = GID()
     gid_stringified = str(gid)
@@ -70,6 +74,7 @@ def test_create_from_string():
     assert gid.random == new_gid.random
     assert gid.time == new_gid.time
     assert gid.datetime == new_gid.datetime
+
 
 def test_create_from_int():
     gid = GID()
@@ -87,10 +92,9 @@ def test_create_from_int():
 
 def test_packing():
     message = b"ciao-there"
-    assert packing(message) == 'Y2lhby10aGVyZQ'
+    assert packing(message) == "Y2lhby10aGVyZQ"
+
 
 def test_unpacking():
-    message = 'Y2lhby10aGVyZQ'
-    assert unpacking(message) == 'ciao-there'
-
-
+    message = "Y2lhby10aGVyZQ"
+    assert unpacking(message) == "ciao-there"
