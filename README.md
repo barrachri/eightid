@@ -1,4 +1,4 @@
-GID: A (really) short id, fitting in 8 bytes.
+EightID: A (really) short id, fitting in 8 bytes.
 ===============
 
 [![Build Status](https://github.com/barrachri/gid/workflows/Test/badge.svg)](https://github.com/jazzband/django-auditlog/actions)
