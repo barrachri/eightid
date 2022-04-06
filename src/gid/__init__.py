@@ -5,22 +5,21 @@ import datetime
 from typing import List
 from functools import cached_property
 
-#  01 Jan 2022 00:00:00.000 GMT
-epoch = 1640995200000
+# int(datetime(2022, 1, 1, 0, 0, tzinfo=timezone.utc).timestamp())
+epoch = 1640995200
 
 # 8 bytes
 raw_len = 8
 
-size = 64
-timestamp_bits = 32
-
-
 def timestamp() -> int:
     """Seconds from epoch"""
-    now = time.time_ns() // 1_000_000
+    now = int(time.time())
     cid_epoch = now - epoch
     return cid_epoch
 
+def right_timestamp(ts: int) -> int:
+    """Seconds from epoch"""
+    return ts + epoch
 
 def random_bits(n: int) -> List[int]:
     return list(os.urandom(n))
@@ -40,12 +39,12 @@ def generate_gid() -> List[int]:
     id[4] = randb[0]
     id[5] = randb[1]
     id[6] = randb[2]
-    id[7] = randb[3]
+    id[7] = (randb[3])
 
     return id
 
 
-class InvalidXid(Exception):
+class InvalidGID(Exception):
     pass
 
 
@@ -53,8 +52,8 @@ class GID(object):
     """
     A short id base on 8 bytes (it fits in a PostgreSQL BigInt).
 
-    16 bites bytes are taken from the timestamp.
-    16 bites bytes are random generated (4.294.967.296 of unique numbers).
+    32 bites bytes are taken from the timestamp.
+    32 bites bytes are random generated (4.294.967.296 of unique numbers).
 
     The string representation is based on urlsafe_b64, with the padding stripped.
 
@@ -81,6 +80,11 @@ class GID(object):
         return packing(byte_value)
 
     @cached_property
+    def int(self):
+        """Return the GID as int."""
+        return int.from_bytes(self.value, "big")
+
+    @cached_property
     def random(self) -> int:
         """Return the random part of the GID."""
         return (
@@ -96,14 +100,9 @@ class GID(object):
         return datetime.datetime.fromtimestamp(self.time)
 
     @cached_property
-    def int(self):
-        """Return the GID as int."""
-        return int.from_bytes(self.value, "big")
-
-    @cached_property
     def time(self) -> int:
         """Return the timestamp of the GID."""
-        return (
+        return right_timestamp(
             self.value[0] << 24
             | self.value[1] << 16
             | self.value[2] << 8
@@ -132,4 +131,7 @@ def packing(b: bytes) -> str:
 
 def unpacking(s: str):
     padded_s = s + "=="
-    return base64.urlsafe_b64decode(padded_s.encode("utf-8")).decode("utf-8")
+    try:
+        return base64.urlsafe_b64decode(padded_s.encode("utf-8")).decode("utf-8")
+    except UnicodeDecodeError:
+        raise InvalidGID("Invalid GID format.")

@@ -2,7 +2,14 @@ from datetime import datetime
 
 import pytest
 
-from gid import GID, packing, timestamp, unpacking, generate_gid
+from src.gid import (
+    GID,
+    packing,
+    timestamp,
+    unpacking,
+    generate_gid,
+    right_timestamp,
+)
 
 
 def test_generate_gid():
@@ -12,7 +19,28 @@ def test_generate_gid():
 
 def test_timestamp():
     time = timestamp()
+
     assert isinstance(time, int)
+
+def test_timestamp_conversion():
+    assert right_timestamp(timestamp())
+
+def test_gid_int_bit_length():
+    gid = GID()
+
+    assert gid.int.bit_length() <= 63
+
+
+def test_gid_datetime():
+    gid = GID()
+
+    now = datetime.now()
+    assert gid.datetime.year == now.year
+    assert gid.datetime.month == now.month
+    assert gid.datetime.day == now.day
+    assert gid.datetime.hour == now.hour
+    assert gid.datetime.minute == now.minute
+    assert gid.datetime.second == now.second
 
 @pytest.mark.parametrize('execution_number', range(100))
 def test_gid(execution_number):
@@ -21,7 +49,7 @@ def test_gid(execution_number):
     assert len(gid.value) == 8
     assert int(gid) == gid.int
     assert str(gid) == gid.string
-    assert len(str(gid)) <= 20
+    assert len(str(gid)) <= 22
     assert isinstance(gid.int, int)
     assert isinstance(gid.bytes, bytes)
     assert isinstance(str(gid), str)
