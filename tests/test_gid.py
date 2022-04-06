@@ -28,7 +28,7 @@ def test_timestamp_conversion():
 def test_gid_int_bit_length():
     gid = GID()
 
-    assert gid.int.bit_length() <= 63
+    assert gid.integer.bit_length() <= 63
 
 
 def test_gid_datetime():
@@ -47,10 +47,10 @@ def test_gid(execution_number):
     gid = GID()
 
     assert len(gid.value) == 8
-    assert int(gid) == gid.int
+    assert int(gid) == gid.integer
     assert str(gid) == gid.string
     assert len(str(gid)) <= 22
-    assert isinstance(gid.int, int)
+    assert isinstance(gid.integer, int)
     assert isinstance(gid.bytes, bytes)
     assert isinstance(str(gid), str)
     assert isinstance(gid.random, int)
@@ -63,7 +63,7 @@ def test_create_from_string():
 
     new_gid = GID.from_string(gid_stringified)
 
-    assert gid.int == new_gid.int
+    assert gid.integer == new_gid.integer
     assert gid.bytes == new_gid.bytes
     assert str(gid) == str(new_gid)
     assert int(gid) == int(new_gid)
@@ -76,7 +76,7 @@ def test_create_from_int():
     gid_integerified = int(gid)
     new_gid = GID.from_int(gid_integerified)
 
-    assert gid.int == new_gid.int
+    assert gid.integer == new_gid.integer
     assert gid.bytes == new_gid.bytes
     assert str(gid) == str(new_gid)
     assert int(gid) == int(new_gid)

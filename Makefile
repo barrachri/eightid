@@ -73,7 +73,7 @@ lint: lint/mypy lint/flake8 lint/black lint/isort ## Run all code checks
 
 ##@ Tests
 test: ## Run tests with coverage
-	poetry run pytest -x src --cov src
+	poetry run python -m pytest -v --cov src tests/
 
 test/debug: ## Run tests in debug mode
 	poetry run pytest --pdb --ff

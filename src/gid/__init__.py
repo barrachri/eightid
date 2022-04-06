@@ -72,7 +72,7 @@ class GID(object):
         return self.string
 
     def __int__(self) -> int:
-        return self.int
+        return self.integer
 
     @cached_property
     def string(self) -> str:
@@ -80,7 +80,7 @@ class GID(object):
         return packing(byte_value)
 
     @cached_property
-    def int(self):
+    def integer(self):
         """Return the GID as int."""
         return int.from_bytes(self.value, "big")
 
