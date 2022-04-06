@@ -1,6 +1,5 @@
 import pytest
 from django.db import connection
-from django.core.exceptions import ValidationError
 
 from src.eightid import EightID, InvalidEightID, django
 from django_app.app.models import AppModel
